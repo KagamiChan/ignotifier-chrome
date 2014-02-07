@@ -31,6 +31,13 @@ var html = (function() {
   }
 })();
 
+window.addEventListener("click", function (e) {
+  var url = e.target.href;
+  if (url) {
+    chrome.extension.getBackgroundPage().open(url);
+  }
+});
+        
 var unreadObjs;
 var selectedAccount, doNext = false,
     doPrevious = false;
@@ -191,16 +198,23 @@ window.addEventListener("load", function () {
   });
   new Listen("inbox", "click", function(e) {
     chrome.extension.getBackgroundPage().open(unreadObjs[iIndex].link);
-  }); 
+  });
+  new Listen("read-all", "click", function(e) {
+    $("read-all").setAttribute("wait", true);
+    $("read-all").setAttribute("disabled", true);
+    var links = [];
+    unreadObjs[iIndex].entries.forEach(function (entry) {
+      links.push(entry.link);
+    });
+    chrome.extension.sendMessage(null, {cmd: "rd-all", link: links}, response);
+  });
   new Listen("refresh", "click", function(e) {
     chrome.extension.getBackgroundPage().tm.reset(true);
   });
-  $("title").addEventListener("click", function (e) {
-    chrome.extension.getBackgroundPage().open(e.target.href);
-  }, false);
-  $("name").addEventListener("click", function (e) {
-    chrome.extension.getBackgroundPage().open(e.target.href);
-  }, false);
+  new Listen("expand", "click", function () {
+    var type = $("content").getAttribute("type");
+    resize(type ? 0 : 1);
+  });
 });
 
 /** Update UI if necessary **/
@@ -238,7 +252,7 @@ var update = (function() {
       body.nameLink = base + "?view=cm&fs=1&tf=1&to=" + entry.author_email;
       body.email = "<" + entry.author_email + ">";
       body.date = prettyDate(entry.modified);
-      body.content = entry.summary + " ...";
+      updateContent ();
       _tag[selectedAccount] = entry.id;
     }
     var doBody = !_tag[selectedAccount] || doAccountSelector || doNext || doPrevious;
@@ -253,6 +267,10 @@ var update = (function() {
           if (index != parseInt(stat.current) - 1) {
             _tag[selectedAccount] = null;
             doBody = true;
+          }
+          // Old entry, just update time
+          else {
+            body.date = prettyDate(entry.modified);
           }
         }
       });
@@ -338,6 +356,9 @@ function response (cmd) {
     case "rd":
       obj = $("read");
       break;
+    case "rd-all":
+      obj = $("read-all");
+      break;
     case "tr":
       obj = $("trash");
       break;
@@ -360,8 +381,6 @@ function response (cmd) {
 
 var tools = {
   onCommand: function () {
-    //Close account selection menu if it is open
-    $("accounts").style.display = "none";
     //Update
     unreadObjs = chrome.extension.getBackgroundPage().unreadObjs;
     //Is previouly selected account still available?
@@ -381,7 +400,63 @@ var tools = {
 }
 window.addEventListener("load", function () {
   tools.onCommand();
+  resize(chrome.extension.getBackgroundPage().prefs.size);
 }, false);
+
+// Resize
+function resize(mode) {
+  mode = parseInt(mode);
+  chrome.extension.getBackgroundPage().prefs.size = mode;
+  width = mode ? 530 : 430;
+  height = mode ? 300 : 32;
+  $("email_body").style.height = height + "px";
+  document.body.style.width = width + "px";
+
+  if (mode) {
+    $("header").setAttribute("type", "expanded");
+    $("content").setAttribute("type", "expanded");
+    $("toolbar").setAttribute("type", "expanded");
+  }
+  else {
+    $("header").removeAttribute("type");
+    $("content").removeAttribute("type");
+    $("toolbar").removeAttribute("type");
+  }
+  updateContent();
+  //Close account selection menu if it is open
+  $("accounts").style.display = "none";
+}
+
+function updateContent () {
+  function doSummary () {
+    var summary = unreadObjs[iIndex].entries[jIndex].summary;
+    $("email_body").textContent = summary + " ...";
+  }
+  var type = $("content").getAttribute("type");
+  if (type) {
+    if (typeof iIndex === 'undefined' || typeof jIndex === 'undefined') return;
+    var link = unreadObjs[iIndex].entries[jIndex].link;
+    var content = chrome.extension.getBackgroundPage().contentCache[link];
+    if (content) {
+      $("content").removeAttribute("mode");
+      $("email_body").innerHTML = content;
+    }
+    else {
+      doSummary ();
+      $("content").setAttribute("mode", "loading");
+      chrome.extension.getBackgroundPage().getBody(link, function (content) {
+        if (link == unreadObjs[iIndex].entries[jIndex].link) {
+          chrome.extension.getBackgroundPage().contentCache[link] = 
+            content === "..." ?  unreadObjs[iIndex].entries[jIndex].summary + " ..." : content;
+          updateContent ();
+        }
+      });
+    }
+  }
+  else {
+    doSummary ();
+  }
+}
 
 /** misc functions **/
 // JavaScript Pretty Date by John Resig (ejohn.org)
@@ -390,7 +465,7 @@ function prettyDate(time) {
       diff = (((new Date()).getTime() - date.getTime()) / 1000),
       day_diff = Math.floor(diff / 86400);
   if (isNaN(day_diff) || day_diff < 0) {
-    return "...";
+    return "just now";
   }
   return day_diff == 0 && (
     diff < 60 && "just now" || 

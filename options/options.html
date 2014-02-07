@@ -8,11 +8,17 @@
   <body>
 
   <div class="container">
-    <div class="title">
-      <span>Gmail Notifier Options</span>
-    </div>
-
-    <table border="0" width="100%">
+    <table class="title" border="0" width="100%">
+      <tr>
+        <td>Gmail Notifier Options</td>
+        <td>
+          <a href="http://add0n.com/gmail-notifier-chrome.html">Home Page</a>
+          <br/>
+          <a href="https://github.com/inbasic/ignotifier-chrome/issues">Support</a>
+        </td>
+      </tr>
+    </table>
+    <table class="body" border="0" width="100%">
       <tr>
         <td class="td1">
           Check for new emails every (seconds):
@@ -57,11 +63,27 @@
       </tr>
       <tr>
         <td>
+          Display author, title and summary of new emails in the desktop notification:
+          <br/>
+          <span class="description"></span>
+        </td>
+        <td valign="baseline"><input type="checkbox" id="showDetails"/></td>
+      </tr>
+      <tr>
+        <td>
           Play alert sound for new emails:
           <br/>
           <span class="description"></span>
         </td>
         <td valign="baseline"><input type="checkbox" id="alert"/></td>
+      </tr>
+      <tr>
+        <td>
+          Mark message as read when archiving it:
+          <br/>
+          <span class="description"></span>
+        </td>
+        <td valign="baseline"><input type="checkbox" id="doReadOnArchive"/></td>
       </tr>
       <tr>
         <td>
@@ -91,6 +113,27 @@
           <span class="description">Valid audio formats are *.wav and *.mp3</span>
         </td>
         <td valign="baseline"><input type="file" id="sound" accept="audio/wav, audio/mpeg"/></td>
+      </tr>
+      <tr>
+        <td class="td1">
+          Specifies the sound volume for the notification:
+          <br/>
+          <span class="description">Volume is a number between 0 to 100 where 100 is the highest volume</span>
+        </td>
+        <td valign="baseline"><input type="number" id="soundVolume" min="0" max="100" style="width: 100%"/></td>
+      </tr>
+      <tr>
+        <td>
+          Toolbar panel mode:
+          <br/>
+          <span class="description"></span>
+        </td>
+        <td valign="baseline">
+          <select id="size">
+            <option value="0">Show summary only</option>
+            <option value="1">Show full content</option>
+          </select>
+        </td>
       </tr>
       <tr>
         <td>

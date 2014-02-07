@@ -1,17 +1,16 @@
-*
+html,body
 {
-  margin: 0;
-  padding: 0;
+  margin:0; 
+  padding:0;
 }
-
 body
 {
   overflow: hidden;
-  font: 14px arial,sans-serif;
+  font: 12.8px arial,sans-serif;
+  background-color: #fff;
+  padding: 3px;
   width: 430px;
-  height: 210px;
 }
-
 a,
 a:hover,
 a:active,
@@ -21,57 +20,42 @@ a:focus
   text-decoration: none;
   color: #191919;
 }
-
 ul
 {
   list-style: none;
 }
-
-#body
-{
-  padding: 3px;
-  border-radius: 2px;
-  background-color: #fff;
-  height: 210px;
-  box-sizing: border-box;
-}
 #preview
 {
-  height: 202px;
   border: 1px solid #DCDCDC;
   border-radius: 2px;
   background-color: #F5F5F5;
   position: relative;
 }
-
 #header,
 #toolbar
 {
   height: 32px;
-  line-height: 25px;
+  line-height: 24px;
   box-sizing: border-box;
   padding: 4px 8px;
   user-select: none;
 }
-
 #toolbar
 {
   text-align: center;
   padding-top: 5px;
 }
-
 #header #nav
 {
   float: right;
   padding-left: 20px;
   border-left: 1px solid #DCDCDC;
+  height: 25px;
 }
-
 #header #nav #stat
 {
   margin-right: 8px;
 }
-
 #header #account_selector
 {
   opacity: 0.55;
@@ -82,12 +66,10 @@ ul
   height: 25px;
   outline: none;
 }
-
 #header #account_selector:hover
 {
   opacity: 0.9;
 }
-
 #header #account_selector span
 {
   background: url(icons.png) 100% -19px no-repeat;
@@ -98,7 +80,9 @@ ul
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
+#header[type="expanded"] #account_selector span  {
+  max-width: 300px;
+}
 #header #accounts
 {
   background: none repeat scroll 0 0 #FFFFFF;
@@ -112,11 +96,13 @@ ul
   position: absolute;
   top: 30px;
   display: none;
+  margin: 0;
+  padding: 0;
+  user-select: none;
 }
-
 #header #accounts li
 {
-  padding: 4px 8px 4px 25px;
+  padding: 4px 8px 4px 35px;
   display: block;
   border-bottom: 1px solid #F5F5F5;
   cursor: pointer;
@@ -125,17 +111,14 @@ ul
 {
   border-bottom: none;
 }
-
 #header #accounts li:hover
 {
   background-color: #F5F5F5;
 }
-
 #header #accounts li.selected
 {
-  background: url(icons.png) 2px -196px no-repeat;
-} 
-
+  background: url(icons.png) 10px -197px no-repeat;
+}
 #content
 {
   background-color: #FFF;
@@ -143,18 +126,18 @@ ul
   border-bottom: 1px solid #DCDCDC;
   box-sizing: border-box;
   overflow: hidden;
-  height: 136px;
   color: #222222;
   position: relative;
-  padding: 8px;
+  padding: 8px 8px 0 8px;
 }
-
+#content[mode="loading"] {
+  background: #fff url('fetch.gif') no-repeat center center;
+}
 #content a
 {
   color: #222222;
   text-decoration: none;
 }
-
 #content #email_title
 {
   font-weight: normal;
@@ -163,7 +146,6 @@ ul
   margin-bottom: 4px;
   display: block;
 }
-
 #content a#title
 {
   color: #222222;
@@ -171,43 +153,47 @@ ul
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 402px;
   padding-right: 2px;
   height: 24px;
 }
-
 #content #name
 {
   font-weight: bold;
 }
-
 #content .sender
 {
   float: left;
   line-height: 24px;
-  max-width: 320px;
+  max-width: 310px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
+#content[type="expanded"] .sender {
+  max-width: 420px;
+}
+#email {
+ color: #727272;
+}
 #content #date
 {
   float: right;
-  font-size: 85%;
   line-height: 24px;
 }
-
 #content p
 {
   float: none;
   clear: both;
   padding: 8px 4px 0 4px;
-  height: 67px;
-  overflow: hidden;
+  height: 32px;
+  overflow: auto;
   text-overflow: ellipsis;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
-
+#content p a {
+  color: #1155CC;
+}
 .btn
 {
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -227,6 +213,7 @@ ul
   box-sizing: border-box;
   border-radius: 2px;
   white-space: nowrap;
+  user-select: none;
 }
 .btn.read {
   width: 100px;
@@ -267,7 +254,6 @@ ul
 {
   opacity: 0.9;
 }
-
 .btn[disabled],
 .btn[disabled]:hover
 {
@@ -275,7 +261,6 @@ ul
   cursor: default;
   z-index:1;
 }
-
 .btn[disabled] i,
 .btn[disabled]:hover i
 {
@@ -293,13 +278,11 @@ ul
   height: 20px;
   margin-top: 2px;
 }
-
 .btn[wait] i
 {
   background-position: 0 0 !important;
   background: url("wait.gif") no-repeat center center;
 }
-
 .btn.down i
 {
   background-position: -1px -24px;
@@ -332,7 +315,25 @@ ul
 {
   background-position: -1px -178px;
 } 
-
+#toolbar:not([type="expanded"]) .btn.read-all {
+  display: none;
+}
+.btn.read-all i
+{
+  background-position: -1px -242px;
+}
+.btn.expand {
+  height: 12px;
+  line-height: 6px;
+}
+.btn.expand i
+{
+  height: 6px;
+  background-position: -1px -229px;
+}
+#content[type="expanded"] .btn.expand i {
+  -webkit-transform: scaleY(-1);
+}
 /** Tooltip **/
 .tooltip {
   position: relative;
@@ -361,7 +362,10 @@ ul
 }
 .tooltip.inbox:hover:after {
   left: -40%;
-} 
+}
+.tooltip.read-all:hover:after {
+  left: -60%;
+}
 .tooltip:hover:before {
   border-bottom-colors: none;
   border-left-colors: none;

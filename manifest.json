@@ -1,9 +1,9 @@
-{
+﻿{
   "manifest_version": 2,
 
-  "name": "Gmail Notifier",
-  "description": "Multiple account (or label) Gmail notifier (without storing passwords).",
-  "version": "0.1.5",
+  "name": "Gmail™ Notifier",
+  "description": "Multiple account (or label) Gmail notifier (without storing passwords)",
+  "version": "0.1.7",
   "icons": { 
     "16": "icon16.png",
     "48": "icon48.png",
@@ -19,9 +19,10 @@
     "https://mail.google.com/",
     "storage",
     "tabs",
-    "notifications"
+    "notifications",
+    "background"
   ],
-  
+
   "web_accessible_resources": [
     "notification.png"
   ],
@@ -30,5 +31,6 @@
     "default_icon": "blue.png"
   },
   
-  "options_page": "options/options.html"
+  "options_page": "options/options.html",
+  "homepage_url": "http://add0n.com/gmail-notifier-chrome.html"
 }
